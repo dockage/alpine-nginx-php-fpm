@@ -1,0 +1,49 @@
+#!/usr/bin/env sh
+set -eu
+
+NGINX_PORT=${NGINX_PORT:-80}
+NGINX_SERVER_NAME=${NGINX_SERVER_NAME:-_}
+
+PHP_FPM_USER=${PHP_FPM_USER:-nginx}
+PHP_FPM_GROUP=${PHP_FPM_USER:-nginx}
+PHP_FPM_UNIX_SOCKET_OWNER=${PHP_FPM_UNIX_SOCKET_OWNER:-nginx}
+PHP_FPM_UNIX_SOCKET_GROUP=${PHP_FPM_UNIX_SOCKET_GROUP:-nginx}
+PHP_FPM_UNIX_SOCKET_MODE=${PHP_FPM_UNIX_SOCKET_MODE:-0660}
+PHP_FPM_PROCESS_MANAGER=${PHP_FPM_PROCESS_MANAGER:-dynamic}
+PHP_FPM_PROCESS_MANAGER_MAX_CHILDREN=${PHP_FPM_PROCESS_MANAGER_MAX_CHILDREN:-5}
+PHP_FPM_PROCESS_MANAGER_START_SERVERS=${PHP_FPM_PROCESS_MANAGER_START_SERVERS:-2}
+PHP_FPM_PROCESS_MANAGER_MIN_SPARE_SERVERS=${PHP_FPM_PROCESS_MANAGER_MIN_SPARE_SERVERS:-1}
+PHP_FPM_PROCESS_MANAGER_MAX_SPARE_SERVERS=${PHP_FPM_PROCESS_MANAGER_MAX_SPARE_SERVERS:-3}
+
+case ${1} in
+    app:start)
+        cat ${DOCKAGE_ETC_DIR}/runtime/configs/php/php-fpm.conf | \
+        sed -e "s#{{PHP_FPM_USER}}#$PHP_FPM_USER#g" \
+            -e "s#{{PHP_FPM_GROUP}}#$PHP_FPM_GROUP#g" \
+            -e "s#{{PHP_FPM_UNIX_SOCKET_OWNER}}#$PHP_FPM_UNIX_SOCKET_OWNER#g" \
+            -e "s#{{PHP_FPM_UNIX_SOCKET_GROUP}}#$PHP_FPM_UNIX_SOCKET_GROUP#g" \
+            -e "s#{{PHP_FPM_UNIX_SOCKET_MODE}}#$PHP_FPM_UNIX_SOCKET_MODE#g" \
+            -e "s#{{PHP_FPM_PROCESS_MANAGER}}#$PHP_FPM_PROCESS_MANAGER#g" \
+            -e "s#{{PHP_FPM_PROCESS_MANAGER_MAX_CHILDREN}}#$PHP_FPM_PROCESS_MANAGER_MAX_CHILDREN#g" \
+            -e "s#{{PHP_FPM_PROCESS_MANAGER_START_SERVERS}}#$PHP_FPM_PROCESS_MANAGER_START_SERVERS#g" \
+            -e "s#{{PHP_FPM_PROCESS_MANAGER_MIN_SPARE_SERVERS}}#$PHP_FPM_PROCESS_MANAGER_MIN_SPARE_SERVERS#g" \
+            -e "s#{{PHP_FPM_PROCESS_MANAGER_MAX_SPARE_SERVERS}}#$PHP_FPM_PROCESS_MANAGER_MAX_SPARE_SERVERS#g" \
+            > /etc/php5/php-fpm.conf
+
+        cat ${DOCKAGE_ETC_DIR}/runtime/configs/nginx/default.conf | \
+        sed -e "s#{{NGINX_PORT}}#$NGINX_PORT#g" \
+            -e "s#{{NGINX_SERVER_NAME}}#$NGINX_SERVER_NAME#g" \
+            > /etc/nginx/conf.d/default.conf
+
+        exec /sbin/runit-init
+        ;;
+    app:help)
+        echo 'Available options:'
+        echo ' app:start        - Starts and monitors a collection of runit services'
+        echo ' app:help         - Displays the help'
+        echo ' [command]        - Execute the specified command, eg. bash.'
+        ;;
+    *)
+        exec "$@"
+        ;;
+esac
