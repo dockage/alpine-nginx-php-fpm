@@ -1,5 +1,11 @@
-FROM dockage/alpine-runit:3.5-3
+FROM dockage/alpine-runit:3.6
 MAINTAINER Mohammad Abdoli Rad <m.abdolirad@gmail.com>
+
+LABEL org.label-schema.name="alpine-nginx-php-fpm" \
+        org.label-schema.vendor="Dockage" \
+        org.label-schema.description="Docker Nginx & PHP-FPM image built on Alpine Linux" \
+        org.label-schema.vcs-url="https://github.com/dockage/alpine-nginx-php-fpm" \
+        org.label-schema.license="MIT"
 
 ENV DOCKAGE_WEBROOT_DIR=/var/www \
     DOCKAGE_DATA_DIR=/data \
