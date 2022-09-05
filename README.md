@@ -42,3 +42,11 @@ For debugging and maintenance purposes you may want access the containers shell.
 
 ```bash
 docker exec -it alpine-nginx-php-fpm sh
+```
+
+## Quick reference
+* Where to get help: [website](https://dockage.dev/), [documentation](https://dockage.dev/docs/)
+* GitHub repo: [dockage/alpine-nginx-php-fpm](https://github.com/dockage/alpine-nginx-php-fpm)
+* Where to file issues: [GitHub issues](https://github.com/dockage/alpine-nginx-php-fpm/issues)
+* Maintained by: The Dockage team (info at dockage.dev)
+* License(s) - [license](https://github.com/dockage/alpine-nginx-php-fpm/blob/main/LICENSE), check 3rd party documentation for license information
